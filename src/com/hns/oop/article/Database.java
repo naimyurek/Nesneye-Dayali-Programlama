@@ -1,4 +1,4 @@
-package com.hns.oop.database;
+package com.hns.oop.article;
 
 import com.hns.oop.exceptions.DatabaseException;
 import java.util.ArrayList;

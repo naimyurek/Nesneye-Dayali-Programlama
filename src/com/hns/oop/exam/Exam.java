@@ -1,15 +1,15 @@
-package com.hns.oop;
+package com.hns.oop.exam;
 
-public class Sınav {
+public class Exam {
     private String ad;
     private String tarih;
     
-    public Sınav(){
+    public Exam(){
         this.ad = null;
         this.tarih = null;
     }
     
-    public Sınav(String ad, String tarih){
+    public Exam(String ad, String tarih){
         this.ad = ad;
         this.tarih = tarih;
     }

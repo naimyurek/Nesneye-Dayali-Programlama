@@ -1,6 +1,5 @@
-package com.hns.oop.database;
+package com.hns.oop.article;
 
-import com.hns.oop.Makale;
 import com.hns.oop.exceptions.DatabaseException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
@@ -10,13 +9,13 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 import org.bson.Document;
 
-public class MakaleDatabase implements Database{
+public class ArticleDatabase implements Database{
 
     private MongoClient mongo;
     private MongoDatabase db;
     private MongoCollection table;
     
-    public MakaleDatabase(String dbName, String collectionName){
+    public ArticleDatabase(String dbName, String collectionName){
         
         mongo = new MongoClient( "localhost" , 27017 );
         db = mongo.getDatabase(dbName);
@@ -25,7 +24,7 @@ public class MakaleDatabase implements Database{
 
     @Override
     public void insert(Object object) throws DatabaseException{
-        Makale makale = (Makale) object;
+        Article makale = (Article) object;
         
         if(find("id=" + makale.getId()).isEmpty()){
             Document document = new Document();
@@ -46,15 +45,15 @@ public class MakaleDatabase implements Database{
     } // Parametre olarak Makale nesnesi alır ve tabloda bu makale yoksa ekler, varsa Exception döndürür.
 
     @Override
-    public ArrayList<Makale> find(String condition) throws DatabaseException{
+    public ArrayList<Article> find(String condition) throws DatabaseException{
         
-        ArrayList<Makale> al = new ArrayList<>();
+        ArrayList<Article> al = new ArrayList<>();
         
         table.find(getQuery(condition)).forEach(new Consumer() {
             @Override
             public void accept(Object t) {
                 Document d = (Document) t;
-                Makale m = new Makale(d.getString("id"), d.getString("title"), d.getString("author"), 
+                Article m = new Article(d.getString("id"), d.getString("title"), d.getString("author"), 
                                       d.getString("venue"), d.getString("author"), d.getString("content"));
                 al.add(m);
             }

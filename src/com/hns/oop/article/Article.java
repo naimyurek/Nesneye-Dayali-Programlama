@@ -1,10 +1,10 @@
-package com.hns.oop;
+package com.hns.oop.article;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Makale {
+public class Article {
     
     private String id;
     private String title;
@@ -13,7 +13,7 @@ public class Makale {
     private String year;
     private String content;
     
-    public Makale(String id, String title, String author, String venue, String year, String content){
+    public Article(String id, String title, String author, String venue, String year, String content){
         this.id = id;
         this.title = title;
         this.author = author;
@@ -87,7 +87,7 @@ public class Makale {
         return null;
     }
     
-    public float similarityTo(Makale m){
+    public float similarityTo(Article m){
         Set<String> set1 = new HashSet<String>(getAnagramList());
         Set<String> set2 = new HashSet<String>(m.getAnagramList());
         
