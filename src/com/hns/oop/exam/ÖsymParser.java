@@ -10,7 +10,7 @@ public abstract class ÖsymParser {
  
     public static final String link = "http://www.osym.gov.tr/TR,8797/takvim.html";
     
-    public static ArrayList<Exam> getSınavListesi() throws ParserException{
+    public static ArrayList<Exam> getList() throws ParserException{
         
         ArrayList<Exam> al = new ArrayList<>();
         
@@ -19,7 +19,7 @@ public abstract class ÖsymParser {
                 al.add(new Exam(e.select("div.col-sm-6").first().text(), e.select("div.col-sm-2").first().text()));
             });
         } catch (IOException ex) {
-            throw new ParserException("Siteye erişimde sorun var");
+            throw new ParserException("Siteye erişimde sorun var.");
         }
         
         return al;

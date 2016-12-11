@@ -1,6 +1,8 @@
 package com.hns.oop.article;
 
 import com.hns.oop.exceptions.DatabaseException;
+import com.hns.oop.exceptions.InsertDatabaseException;
+import com.hns.oop.exceptions.QueryDatabaseException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -40,7 +42,7 @@ public class ArticleDatabase implements Database{
             table.insertOne(document);
         }
         else{
-            throw new DatabaseException("Bu makale zaten mevcut.");
+            throw new InsertDatabaseException("Veritabanında bu kayıt zaten mevcut.");
         }
     } // Parametre olarak Makale nesnesi alır ve tabloda bu makale yoksa ekler, varsa Exception döndürür.
 
@@ -61,7 +63,7 @@ public class ArticleDatabase implements Database{
         return al;
     } // String olarak bir komut alır ve tablodan bu kısıta uygun girdileri bulur, makale nesnesine dönüştürür ve bütün makalelerin listesini döndürür.
     
-    private BasicDBObject getQuery(String s) throws DatabaseException{
+    private BasicDBObject getQuery(String s) throws QueryDatabaseException{
         BasicDBObject q = new BasicDBObject();
         
         if(s.isEmpty())
@@ -72,7 +74,7 @@ public class ArticleDatabase implements Database{
         for(String c : cs){
             String i[] = c.split("=");
             if(i.length != 2)
-                throw new DatabaseException("Sorguda hata var.");
+                throw new QueryDatabaseException();
             q.put(i[0],i[1]);
         }
         
