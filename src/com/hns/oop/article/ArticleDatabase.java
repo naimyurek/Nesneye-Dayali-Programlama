@@ -1,6 +1,7 @@
 package com.hns.oop.article;
 
 import com.hns.oop.exceptions.DatabaseException;
+import com.hns.oop.exceptions.EntryNotFoundDatabaseException;
 import com.hns.oop.exceptions.InsertDatabaseException;
 import com.hns.oop.exceptions.QueryDatabaseException;
 import com.mongodb.BasicDBObject;
@@ -28,7 +29,11 @@ public class ArticleDatabase implements Database{
     public void insert(Object object) throws DatabaseException{
         Article makale = (Article) object;
         
-        if(find("id=" + makale.getId()).isEmpty()){
+        try {
+            if (find("id=" + makale.getId()).size()>0)
+                throw new InsertDatabaseException("Veritabanında bu kayıt zaten mevcut.");
+        }
+        catch(EntryNotFoundDatabaseException ex){
             Document document = new Document();
         
             document.put("id", ""+makale.getId());
@@ -37,12 +42,9 @@ public class ArticleDatabase implements Database{
             document.put("venue", makale.getVenue());
             document.put("year", makale.getYear());
             document.put("content", makale.getContent());
-            document.put("keywords", makale.getKeywords());
+            document.put("keywords", makale.getKeywords(50));
         
             table.insertOne(document);
-        }
-        else{
-            throw new InsertDatabaseException("Veritabanında bu kayıt zaten mevcut.");
         }
     } // Parametre olarak Makale nesnesi alır ve tabloda bu makale yoksa ekler, varsa Exception döndürür.
 
@@ -60,6 +62,8 @@ public class ArticleDatabase implements Database{
                 al.add(m);
             }
         });
+        if(al.isEmpty())
+            throw new EntryNotFoundDatabaseException();
         return al;
     } // String olarak bir komut alır ve tablodan bu kısıta uygun girdileri bulur, makale nesnesine dönüştürür ve bütün makalelerin listesini döndürür.
     
