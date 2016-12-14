@@ -10,7 +10,7 @@ public class DatabaseTest {
     
     @Before
     public void setUp() {
-        db = new ArticleDatabase("local", "makale");
+        db = new ArticleDatabase("mongodb://oop:658898@ds133398.mlab.com:33398/oop" , "article");
     }
     
     @Test

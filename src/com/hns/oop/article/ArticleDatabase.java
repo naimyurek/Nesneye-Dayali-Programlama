@@ -6,6 +6,7 @@ import com.hns.oop.exceptions.InsertDatabaseException;
 import com.hns.oop.exceptions.QueryDatabaseException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import java.util.ArrayList;
@@ -18,16 +19,22 @@ public class ArticleDatabase implements Database{
     private MongoDatabase db;
     private MongoCollection table;
     
-    public ArticleDatabase(String dbName, String collectionName){
+    public ArticleDatabase(String host, String collectionName){
         
-        mongo = new MongoClient( "localhost" , 27017 );
-        db = mongo.getDatabase(dbName);
+        MongoClientURI uri  = new MongoClientURI(host);
+        mongo = new MongoClient( uri );
+        db = mongo.getDatabase(uri.getDatabase());
         table = db.getCollection(collectionName);
     }
 
     @Override
     public void insert(Object object) throws DatabaseException{
-        Article makale = (Article) object;
+        
+        Article makale;
+        if (object instanceof Article)
+            makale = (Article) object;
+        else
+            throw new DatabaseException("Nesne tipi 'Article' değil.");
         
         try {
             if (find("id=" + makale.getId()).size()>0)
@@ -42,7 +49,7 @@ public class ArticleDatabase implements Database{
             document.put("venue", makale.getVenue());
             document.put("year", makale.getYear());
             document.put("content", makale.getContent());
-            document.put("keywords", makale.getKeywords(50));
+            document.put("keywords", makale.getKeywordsAsString(50));
         
             table.insertOne(document);
         }

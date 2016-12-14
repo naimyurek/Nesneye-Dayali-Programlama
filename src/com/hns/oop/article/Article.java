@@ -81,24 +81,12 @@ public class Article {
         return title;
     }
     
-    public String getKeywords(int length){
+    public String getKeywordsAsString(int length){
         String str = "";
         
         str = getKeywordList(length).stream().map((x) -> x + " ").reduce(str, String::concat);
             
         return str;
-    }
-    
-    public List<String> getAnagramList(int length){
-        List<String> l = new ArrayList<>();
-        for(String s : getKeywordList(length)){
-            s = "_".concat(s).concat("_");
-            for(int i=0; i<s.length()-2; i++){
-                l.add(s.substring(i, i+3));
-            }
-        }
-        l = l.stream().distinct().collect(Collectors.toList());
-        return l;
     }
     
     public List<String> getKeywordList(int length){
@@ -125,18 +113,4 @@ public class Article {
             return l.subList(0, length);
     }
     
-    public float similarityTo(Article a, int length){
-        Set<String> set1 = new HashSet<>(getAnagramList(length));
-        Set<String> set2 = new HashSet<>(a.getAnagramList(length));
-        
-        int size1 = set1.size();
-        int size2 = set2.size();
-        
-        set1.retainAll(set2);
-        return 100*((float)set1.size()/(size1 + size2 - set1.size()));
-    }
-    
-    public float similarityTo(Article a){
-        return similarityTo(a, 0);
-    }
 }
