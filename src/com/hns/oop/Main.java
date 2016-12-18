@@ -5,12 +5,21 @@
  */
 package com.hns.oop;
 
+
+import java.awt.Component;
+import javax.swing.JFileChooser;
+
+
+
+
+
 /**
  *
  * @author Naim YÜREK
  */
 public class Main extends javax.swing.JFrame {
 
+    private String txtPath;
     /**
      * Creates new form Main
      */
@@ -100,6 +109,11 @@ public class Main extends javax.swing.JFrame {
         buttonCancel.setText("Cancel");
         buttonCancel.setMaximumSize(new java.awt.Dimension(79, 23));
         buttonCancel.setMinimumSize(new java.awt.Dimension(79, 23));
+        buttonCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -161,11 +175,36 @@ public class Main extends javax.swing.JFrame {
 
     private void buttonBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonBrowseActionPerformed
         // TODO add your handling code here:
+        
+        JFileChooser fileChooser = new JFileChooser();
+ 
+        //For Directory
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+  
+        // For File
+        //fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+ 
+        fileChooser.setAcceptAllFileFilterUsed(false);
+ 
+        int rVal = fileChooser.showOpenDialog(null);
+        if (rVal == JFileChooser.APPROVE_OPTION) {
+          txtPath=fileChooser.getSelectedFile().toString();
+        }
+        browseComboBox.addItem(txtPath);//combo box mıza ekliyoruz.
+        
+        //En sonuncu itemi seçiyor.
+        browseComboBox.setSelectedItem(txtPath);
+        
     }//GEN-LAST:event_buttonBrowseActionPerformed
 
     private void buttonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOkActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_buttonOkActionPerformed
+
+    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_buttonCancelActionPerformed
 
     /**
      * @param args the command line arguments
