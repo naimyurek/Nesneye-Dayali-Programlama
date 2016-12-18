@@ -9,15 +9,18 @@ import java.io.IOException;
 
 public abstract class Initializer {
     
-    public static void initArticle(Database<Article> db, String csvFile) throws IOException {
+    public static void populateDatabase(Database<Article> db, String csvFile) throws IOException {
         
         CsvReader cr = new CsvReader(csvFile);
         String[] s;
+        Downloader d = Downloader.getDownloader();
+        d.setDestination("");
 
         while ((s = cr.next())!= null) {
-            Downloader.download(s[5], s[0] + ".pdf");
             
-            PdfFile pdfFile = new PdfFile(s[0] + ".pdf");
+            d.download(s[5], s[0] + ".pdf");
+            
+            PdfFile pdfFile = new PdfFile(d.getDestination() + s[0] + ".pdf");
             
             Article article = new Article(s[0], s[1], s[2], s[3], s[4], pdfFile.toString());
             

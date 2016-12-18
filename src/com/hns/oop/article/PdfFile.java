@@ -24,6 +24,7 @@ public class PdfFile {
         pdfStripper.setEndPage(pdDoc.getNumberOfPages());
         
         Text = pdfStripper.getText(pdDoc);
+        
     }
     
     @Override

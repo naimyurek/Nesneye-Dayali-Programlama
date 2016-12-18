@@ -5,11 +5,7 @@
  */
 package com.hns.oop.article;
 
-import com.hns.oop.Initializer;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.Test;
 
 /**
@@ -24,12 +20,12 @@ public class ArticleTest {
     
     @Test
     public void run(){
-        Database<Article> db = new ArticleDatabase("local", "makale");
-        try {
-            Initializer.initArticle(db, "acm.csv");
+        Database<Article> db = new ArticleDatabase("mongodb://oop:658898@ds133398.mlab.com:33398/oop", "article");
+        /*try {
+        Initializer.populateDatabase(db, "acm.csv");
         } catch (IOException ex) {
-            System.out.println(ex);
-        }
+        System.out.println(ex);
+        }*/
         
         try {
             ArrayList<Article> al = db.find("");
@@ -37,12 +33,14 @@ public class ArticleTest {
             Article a1 = al.get(0);
             Article a2 = al.get(1);
             
+            ArticleComparator ac = new ArticleComparator(new JaccardSimilarity());
+            
             System.out.println("Keywordler a1:");
-            System.out.println(a1.getKeywords(50));
+            System.out.println(a1.getKeywordsAsString(50));
             System.out.println("Keywordler a2:");
-            System.out.println(a2.getKeywords(50));
+            System.out.println(a2.getKeywordsAsString(50));
             System.out.println();
-            System.out.println("Similarity is: %" + String.format("%.2f", a1.similarityTo(a2, 50)));
+            System.out.println("Similarity is: %" + String.format("%.2f", ac.getSimilarity(a1, a2)));
         } catch (Exception ex) {
             System.out.println(ex);
         }
