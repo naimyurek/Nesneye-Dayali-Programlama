@@ -5,7 +5,22 @@
  */
 package com.hns.oop.gui;
 
+import com.hns.oop.article.Article;
+import com.hns.oop.article.ArticleDatabase;
+import com.hns.oop.article.Database;
+import com.hns.oop.exam.Exam;
+import com.hns.oop.exam.ÖsymParser;
+import com.hns.oop.exceptions.DatabaseException;
+import com.hns.oop.exceptions.ParserException;
+import java.awt.Component;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -13,11 +28,19 @@ import javax.swing.JFrame;
  */
 public class ArticleGui extends javax.swing.JFrame{
 
+    private Database<Article> db;
+    private ArrayList<Article> al;
     /**
      * Creates new form ArticleGui
      */
-    public ArticleGui(String txtPath) {
+    public ArticleGui() {
         initComponents();
+        buttonGroup1.add(jRadioButton1);
+        buttonGroup1.add(jRadioButton2);
+        buttonGroup1.add(jRadioButton3);
+        jLabelFailed.setVisible(false);
+        
+        db = new ArticleDatabase("mongodb://oop:658898@ds133398.mlab.com:33398/oop", "article");
     }
 
     /**
@@ -29,27 +52,290 @@ public class ArticleGui extends javax.swing.JFrame{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableResult = new javax.swing.JTable();
+        jTextFieldSearch = new javax.swing.JTextField();
+        searchButton = new javax.swing.JButton();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableExam = new javax.swing.JTable();
+        jButtonLoad = new javax.swing.JButton();
+        jLabelFailed = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jTableResult.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "TITLE", "AUTHOR", "VENUE", "YEAR"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableResult.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableResultMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTableResult);
+        if (jTableResult.getColumnModel().getColumnCount() > 0) {
+            jTableResult.getColumnModel().getColumn(3).setMinWidth(50);
+            jTableResult.getColumnModel().getColumn(3).setPreferredWidth(50);
+            jTableResult.getColumnModel().getColumn(3).setMaxWidth(50);
+        }
+
+        jTextFieldSearch.setToolTipText("Search");
+
+        searchButton.setText("Search");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
+
+        jRadioButton1.setSelected(true);
+        jRadioButton1.setText("Title");
+
+        jRadioButton2.setText("Year");
+
+        jRadioButton3.setText("Keyword");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jRadioButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jRadioButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jRadioButton3)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jTextFieldSearch)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButton1)
+                    .addComponent(jRadioButton2)
+                    .addComponent(jRadioButton3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTextFieldSearch.getAccessibleContext().setAccessibleName("");
+
+        jTabbedPane1.addTab("PDF's", jPanel1);
+
+        jTableExam.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "NAME", "DATE", "ALERT"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(jTableExam);
+        if (jTableExam.getColumnModel().getColumnCount() > 0) {
+            jTableExam.getColumnModel().getColumn(1).setMinWidth(120);
+            jTableExam.getColumnModel().getColumn(1).setPreferredWidth(120);
+            jTableExam.getColumnModel().getColumn(1).setMaxWidth(120);
+            jTableExam.getColumnModel().getColumn(2).setMinWidth(50);
+            jTableExam.getColumnModel().getColumn(2).setPreferredWidth(50);
+            jTableExam.getColumnModel().getColumn(2).setMaxWidth(50);
+        }
+
+        jButtonLoad.setText("LOAD EXAMS ↺");
+        jButtonLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLoadActionPerformed(evt);
+            }
+        });
+
+        jLabelFailed.setText("Failed Loading Exams!");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jButtonLoad)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelFailed)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonLoad, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelFailed))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Exam Date", jPanel2);
+        jPanel2.getAccessibleContext().setAccessibleName("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-   
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
 
-   
+        searchButton.setEnabled(false);
+        
+        DefaultTableModel model = (DefaultTableModel) jTableResult.getModel();
+        model.getDataVector().removeAllElements();
+        model.fireTableDataChanged();
+        
+        al = null;
+        
+        if(jRadioButton1.isSelected()){
+            try {
+                al = db.find("title=/"+jTextFieldSearch.getText()+"/");
+            } catch (DatabaseException ex) {
+                Logger.getLogger(ArticleGui.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else if(jRadioButton2.isSelected()){
+            try {
+                al = db.find("year="+jTextFieldSearch.getText());
+            } catch (DatabaseException ex) {
+                Logger.getLogger(ArticleGui.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else if(jRadioButton3.isSelected()){
+            try {
+                al = db.find("keywords=/"+jTextFieldSearch.getText()+"/");
+            } catch (DatabaseException ex) {
+                Logger.getLogger(ArticleGui.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        if(al != null){
+            for(Article a : al){
+                model.addRow(new Object[]{a.getTitle(), a.getAuthor(), a.getVenue(), a.getYear()});
+            }
+        }
+        
+        searchButton.setEnabled(true);
+    }//GEN-LAST:event_searchButtonActionPerformed
+
+    private void jButtonLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoadActionPerformed
+        initExams();
+    }//GEN-LAST:event_jButtonLoadActionPerformed
+
+    private void jTableResultMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableResultMouseClicked
+        if (evt.getClickCount()>=2){
+            int index = jTableResult.getSelectedRow();
+            
+            new ArticleReaderGui(al.get(index), db).setVisible(true);
+        }
+    }//GEN-LAST:event_jTableResultMouseClicked
+
+    private void initExams() {
+        DefaultTableModel model = (DefaultTableModel) jTableExam.getModel();
+        model.getDataVector().removeAllElements();
+        model.fireTableDataChanged();
+        
+        try {
+            ArrayList<Exam> alExam = ÖsymParser.getList();
+            if(alExam != null){
+                for(Exam e : alExam){
+                    model.addRow(new Object[]{e.getAd(), e.getTarih()});
+                }
+            }
+            jLabelFailed.setVisible(false);
+        } catch (ParserException ex) {
+            jLabelFailed.setVisible(true);
+        }
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButtonLoad;
+    private javax.swing.JLabel jLabelFailed;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTable jTableExam;
+    private javax.swing.JTable jTableResult;
+    private javax.swing.JTextField jTextFieldSearch;
+    private javax.swing.JButton searchButton;
     // End of variables declaration//GEN-END:variables
 }

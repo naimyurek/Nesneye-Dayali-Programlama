@@ -65,7 +65,7 @@ public class ArticleDatabase implements Database{
             public void accept(Object t) {
                 Document d = (Document) t;
                 Article m = new Article(d.getString("id"), d.getString("title"), d.getString("author"), 
-                                      d.getString("venue"), d.getString("author"), d.getString("content"));
+                                      d.getString("venue"), d.getString("year"), d.getString("content"));
                 al.add(m);
             }
         });
@@ -86,7 +86,12 @@ public class ArticleDatabase implements Database{
             String i[] = c.split("=");
             if(i.length != 2)
                 throw new QueryDatabaseException();
-            q.put(i[0],i[1]);
+            if(i[1].charAt(0)=='/'){
+                String r = i[1].substring(1, i[1].length()-1);
+                q.put(i[0], new BasicDBObject("$regex", r).append("$options","i"));
+            }
+            else
+                q.put(i[0],i[1]);
         }
         
         return q;

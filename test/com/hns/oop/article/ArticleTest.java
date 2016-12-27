@@ -33,7 +33,7 @@ public class ArticleTest {
             Article a1 = al.get(0);
             Article a2 = al.get(1);
             
-            ArticleComparator ac = new ArticleComparator(new JaccardSimilarity());
+            ArticleComparator ac = new ArticleComparator(new JaccardSimilarity3Gram());
             
             System.out.println("Keywordler a1:");
             System.out.println(a1.getKeywordsAsString(50));
