@@ -87,6 +87,8 @@ public class ArticleDatabase implements Database{
             if(i.length != 2)
                 throw new QueryDatabaseException();
             if(i[1].charAt(0)=='/'){
+                if(i[1].length()<=2)
+                    throw new QueryDatabaseException();
                 String r = i[1].substring(1, i[1].length()-1);
                 q.put(i[0], new BasicDBObject("$regex", r).append("$options","i"));
             }

@@ -44,8 +44,8 @@
         <Container class="javax.swing.JPanel" name="jPanel1">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="PDF&apos;s">
-                <Property name="tabTitle" type="java.lang.String" value="PDF&apos;s"/>
+              <JTabbedPaneConstraints tabName="Article">
+                <Property name="tabTitle" type="java.lang.String" value="Article"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -188,8 +188,8 @@
           </AccessibilityProperties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Exam Date">
-                <Property name="tabTitle" type="java.lang.String" value="Exam Date"/>
+              <JTabbedPaneConstraints tabName="Exam">
+                <Property name="tabTitle" type="java.lang.String" value="Exam"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

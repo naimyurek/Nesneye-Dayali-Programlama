@@ -20,20 +20,21 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Naim YÜREK
  */
-public class ArticleGui extends javax.swing.JFrame{
+public class MainGui extends javax.swing.JFrame{
 
     private Database<Article> db;
     private ArrayList<Article> al;
     /**
      * Creates new form ArticleGui
      */
-    public ArticleGui() {
+    public MainGui() {
         initComponents();
         buttonGroup1.add(jRadioButton1);
         buttonGroup1.add(jRadioButton2);
@@ -161,7 +162,7 @@ public class ArticleGui extends javax.swing.JFrame{
 
         jTextFieldSearch.getAccessibleContext().setAccessibleName("");
 
-        jTabbedPane1.addTab("PDF's", jPanel1);
+        jTabbedPane1.addTab("Article", jPanel1);
 
         jTableExam.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -232,7 +233,7 @@ public class ArticleGui extends javax.swing.JFrame{
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Exam Date", jPanel2);
+        jTabbedPane1.addTab("Exam", jPanel2);
         jPanel2.getAccessibleContext().setAccessibleName("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -263,21 +264,21 @@ public class ArticleGui extends javax.swing.JFrame{
             try {
                 al = db.find("title=/"+jTextFieldSearch.getText()+"/");
             } catch (DatabaseException ex) {
-                Logger.getLogger(ArticleGui.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             }
         }
         else if(jRadioButton2.isSelected()){
             try {
                 al = db.find("year="+jTextFieldSearch.getText());
             } catch (DatabaseException ex) {
-                Logger.getLogger(ArticleGui.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             }
         }
         else if(jRadioButton3.isSelected()){
             try {
                 al = db.find("keywords=/"+jTextFieldSearch.getText()+"/");
             } catch (DatabaseException ex) {
-                Logger.getLogger(ArticleGui.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage());
             }
         }
         

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -38,12 +39,14 @@ public class ArticleReaderGui extends javax.swing.JFrame {
         initComponents();
         this.article = article;
         this.db = db;
+        similars = new ArrayList<>();
         jTextAreaArticle.setText(article.getContent());
         try {
             setSimilars();
         } catch (DatabaseException ex) {
             System.out.println(ex);
         }
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -137,6 +140,7 @@ public class ArticleReaderGui extends javax.swing.JFrame {
     private void jTableResultMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableResultMouseClicked
         if (evt.getClickCount()>=2){
             int index = jTableResult.getSelectedRow();
+            System.out.println(evt.getClickCount() + " " + index);
             new ArticleReaderGui(similars.get(index), db).setVisible(true);
         }
     }//GEN-LAST:event_jTableResultMouseClicked
@@ -164,8 +168,10 @@ public class ArticleReaderGui extends javax.swing.JFrame {
             if (model.getRowCount() != 3){
                 Article a = e.getKey();
                 Float similarity = e.getValue();
-                if (!article.equals(a))
+                if (!article.equals(a)){
                     model.addRow(new Object[]{a.getTitle(), a.getAuthor(), a.getVenue(), a.getYear(), similarity});
+                    similars.add(a);
+                }
             }
         }
     }
