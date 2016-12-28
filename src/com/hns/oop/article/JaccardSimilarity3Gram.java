@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  *
  * @author Harun
  */
-public class JaccardSimilarity implements SimilarityStrategy {
+public class JaccardSimilarity3Gram implements SimilarityStrategy {
 
     @Override
     public float getSimilarity(Article a1, Article a2) {

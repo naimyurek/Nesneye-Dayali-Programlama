@@ -81,6 +81,15 @@ public class Article {
         return title;
     }
     
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof Article){
+            Article a = (Article) o;
+            return getId().equals(a.getId());
+        }
+        return false;
+    }
+    
     public String getKeywordsAsString(int length){
         String str = "";
         
