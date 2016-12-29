@@ -200,7 +200,8 @@ public class BrowseGui extends javax.swing.JFrame {
     private void buttonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOkActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
-        new ArticleGui(txtPath).setVisible(true);
+        new MainGui().setVisible(true);
+        this.dispose();//Bu gui arka planda çalışmayacak.
         
     }//GEN-LAST:event_buttonOkActionPerformed
 
