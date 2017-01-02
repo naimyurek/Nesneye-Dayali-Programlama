@@ -34,4 +34,15 @@ public class Exam {
     public String toString() {
         return ad + " " + tarih;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Exam){
+            Exam e = (Exam) o;
+            if (e.getAd().equals(getAd()) && e.getTarih().equals(getTarih()))
+                return true;
+        }
+        return false;
+    }
+    
 }

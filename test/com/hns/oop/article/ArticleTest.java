@@ -1,31 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.hns.oop.article;
 
+import com.hns.oop.exceptions.DatabaseException;
 import java.util.ArrayList;
 import org.junit.Test;
 
-/**
- *
- * @author Harun
- */
 public class ArticleTest {
-    
-    public ArticleTest() {
-        
-    }
     
     @Test
     public void run(){
         Database<Article> db = new ArticleDatabase("mongodb://oop:658898@ds133398.mlab.com:33398/oop", "article");
-        /*try {
-        Initializer.populateDatabase(db, "acm.csv");
-        } catch (IOException ex) {
-        System.out.println(ex);
-        }*/
         
         try {
             ArrayList<Article> al = db.find("");
@@ -41,7 +24,7 @@ public class ArticleTest {
             System.out.println(a2.getKeywordsAsString(50));
             System.out.println();
             System.out.println("Similarity is: %" + String.format("%.2f", ac.getSimilarity(a1, a2)));
-        } catch (Exception ex) {
+        } catch (DatabaseException ex) {
             System.out.println(ex);
         }
     }

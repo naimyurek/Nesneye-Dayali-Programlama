@@ -1,5 +1,6 @@
 package com.hns.oop;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -10,10 +11,10 @@ import java.nio.file.StandardCopyOption;
 public class Downloader {
     
     private static Downloader downloader;
-    private String destination;
+    private String directory;
 
     private Downloader() {
-        destination = "";
+        directory = "";
     }
     
     public static Downloader getDownloader(){
@@ -22,18 +23,25 @@ public class Downloader {
         return downloader;
     }
     
-    public void download(String link, String name) throws IOException{
+    public void download(String link, String name) throws IOException{    
+        
         URL url = new URL(link);
-        try (InputStream in = url.openStream()) {
-            Files.copy(in, Paths.get(destination + name), StandardCopyOption.REPLACE_EXISTING);
+        InputStream in = url.openStream();
+        
+        if (directory.length()!=0){
+            File file = new File(directory);
+            if (!file.exists())
+                file.mkdir();
         }
+
+        Files.copy(in, Paths.get(directory + name), StandardCopyOption.REPLACE_EXISTING);
     }
     
-    public void setDestination(String destination){
-        this.destination = destination;
+    public void setDirectory(String directory){
+        this.directory = directory;
     }
     
-    public String getDestination(){
-        return destination;
+    public String getDirectory(){
+        return directory + "/";
     }
 }
