@@ -54,8 +54,7 @@ public class EmailNotifier extends Notifier{
 
             Transport.send(message);
 
-            System.out.println("An Email is sent.");
-        
+            System.out.println("Email is sent.\n" + email.toString());
         }
         catch (MessagingException e) {
             throw new NotifierException(e.getMessage());

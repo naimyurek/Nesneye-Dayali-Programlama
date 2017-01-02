@@ -28,5 +28,14 @@ public class Email {
     public String getText() {
         return text;
     }
+
+    @Override
+    public String toString() {
+        String str = "From: " + getFrom() + "\n" +
+                     "To: " + getTo() + "\n" +
+                     "Subject: " + getSubject() + "\n" +
+                     "Text: " + getText();
+        return str;
+    }
     
 }
