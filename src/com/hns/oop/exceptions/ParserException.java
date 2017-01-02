@@ -3,7 +3,7 @@ package com.hns.oop.exceptions;
 public class ParserException extends Exception{
 
     public ParserException() {
-        super("Bilinmeyen parser hatası.");
+        super("Unknown parser error.");
     }
     
     public ParserException(String str){

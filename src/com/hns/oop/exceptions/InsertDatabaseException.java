@@ -3,7 +3,7 @@ package com.hns.oop.exceptions;
 public class InsertDatabaseException extends DatabaseException{
 
     public InsertDatabaseException() {
-        super("Veritabanına veri girilirken hata.");
+        super("An error occured while inserting the record.");
     }
     
     public InsertDatabaseException(String s) {

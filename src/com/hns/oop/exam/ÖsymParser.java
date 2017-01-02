@@ -6,11 +6,16 @@ import java.util.ArrayList;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
-public abstract class ÖsymParser {
- 
-    public static final String link = "http://www.osym.gov.tr/TR,8797/takvim.html";
+public class ÖsymParser {
     
-    public static ArrayList<Exam> getList() throws ParserException{
+    private static ÖsymParser parser = null;
+    private final String link;
+
+    private ÖsymParser() {
+        link = "http://www.osym.gov.tr/TR,8797/takvim.html";
+    }
+    
+    public ArrayList<Exam> getList() throws ParserException{
         
         ArrayList<Exam> al = new ArrayList<>();
         
@@ -19,9 +24,15 @@ public abstract class ÖsymParser {
                 al.add(new Exam(e.select("div.col-sm-6").first().text(), e.select("div.col-sm-2").first().text()));
             });
         } catch (IOException ex) {
-            throw new ParserException("Siteye erişimde sorun var.");
+            throw new ParserException("Connection problem.");
         }
         
         return al;
+    }
+    
+    public static ÖsymParser getParser(){
+        if (parser == null)
+            parser = new ÖsymParser();
+        return parser;
     }
 }
