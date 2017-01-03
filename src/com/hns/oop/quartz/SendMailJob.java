@@ -63,6 +63,7 @@ public class SendMailJob implements Job
     
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        
         if (email == null || notifier == null)
             return;
         
@@ -82,6 +83,7 @@ public class SendMailJob implements Job
                 String text = "You have an exam tomorrow!\n\n" +
                               "Exam name: " + name + "\n" +
                               "Exam date: " + date;
+                
                 try {
                     notifier.notifyUser(new Email(email.getFrom(), email.getTo(), email.getSubject(), text));
                 } 
@@ -94,6 +96,7 @@ public class SendMailJob implements Job
                 String text = "You have an exam next week!\n\n" +
                               "Exam name: " + getName() + "\n" +
                               "Exam date: " + getDate();
+                
                 try {
                     notifier.notifyUser(new Email(email.getFrom(), email.getTo(), email.getSubject(), text));
                 } 
