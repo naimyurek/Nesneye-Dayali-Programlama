@@ -1,34 +1,25 @@
 package com.hns.oop.gui;
 
+import com.hns.oop.Helper;
 import com.hns.oop.article.Article;
-import com.hns.oop.article.ArticleComparator;
-import com.hns.oop.article.Database;
-import com.hns.oop.article.JaccardSimilarity3Gram;
 import com.hns.oop.exceptions.DatabaseException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
 public class ArticleReaderGui extends javax.swing.JFrame {
 
     Article article;
-    Database<Article> db;
     ArrayList<Article> similars;
     
     
-    public ArticleReaderGui(Article article, Database<Article> db) {
+    public ArticleReaderGui(Article article) {
         initComponents();
         this.article = article;
-        this.db = db;
         similars = new ArrayList<>();
         jTextAreaArticle.setText(article.getContent());
         try {
-            setSimilars();
+            similars = Helper.getDefaultHelper().setSimilars(article, (DefaultTableModel) jTableResult.getModel());
         } catch (DatabaseException ex) {
             System.out.println(ex);
         }
@@ -124,41 +115,10 @@ public class ArticleReaderGui extends javax.swing.JFrame {
     private void jTableResultMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableResultMouseClicked
         if (evt.getClickCount()>=2){
             int index = jTableResult.getSelectedRow();
-            System.out.println(evt.getClickCount() + " " + index);
-            new ArticleReaderGui(similars.get(index), db).setVisible(true);
+            System.out.println("Clicked " + evt.getClickCount() + " times on article with index number " + index + ".");
+            new ArticleReaderGui(similars.get(index)).setVisible(true);
         }
     }//GEN-LAST:event_jTableResultMouseClicked
-
-    private void setSimilars() throws DatabaseException{
-        
-        DefaultTableModel model = (DefaultTableModel) jTableResult.getModel();
-        model.getDataVector().removeAllElements();
-        model.fireTableDataChanged();
-        
-        Map<Article, Float> map = new HashMap<>();
-        ArticleComparator ac = new ArticleComparator(new JaccardSimilarity3Gram());
-        
-        for (Article w : db.find("")) {
-            Float similarity = ac.getSimilarity(article, w);
-            map.put(w, similarity);
-        }
-        
-        map = map.entrySet()
-        .stream()
-        .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        
-        for(Map.Entry<Article,Float> e : map.entrySet()){
-            if (model.getRowCount() != 3){
-                Article a = e.getKey();
-                Float similarity = e.getValue();
-                if (!article.equals(a)){
-                    model.addRow(new Object[]{a.getTitle(), a.getAuthor(), a.getVenue(), a.getYear(), similarity});
-                    similars.add(a);
-                }
-            }
-        }
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabelSimilars;

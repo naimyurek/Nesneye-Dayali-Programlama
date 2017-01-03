@@ -1,29 +1,10 @@
 package com.hns.oop.gui;
 
-import com.hns.oop.csv.CsvReader;
-import com.hns.oop.csv.CsvWriter;
-import com.hns.oop.Downloader;
-import com.hns.oop.quartz.QuartzScheduler;
-import com.hns.oop.article.Article;
-import com.hns.oop.article.ArticleDatabase;
-import com.hns.oop.article.Database;
-import com.hns.oop.article.PdfFile;
-import com.hns.oop.exam.Exam;
-import com.hns.oop.exam.ÖsymParser;
+import com.hns.oop.Helper;
 import com.hns.oop.exceptions.DatabaseException;
 import com.hns.oop.exceptions.ParserException;
-import com.hns.oop.notifier.Email;
-import com.hns.oop.notifier.EmailNotifier;
-import com.hns.oop.notifier.Notifier;
-import com.hns.oop.quartz.SendMailJob;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -31,45 +12,17 @@ import javax.swing.table.DefaultTableModel;
 import org.quartz.SchedulerException;
 
 public class MainGui extends javax.swing.JFrame{
-
-    private final String MAILFILE = "UserMailInfo.txt";
-    private final String MAILUSERNAME = "oopnotifier@gmail.com";
-    private final String MAILPASSWORD = "egebilmuh";
-    
-    private final String DBHOST = "mongodb://oop:658898@ds133398.mlab.com:33398/oop";
-    private final String DBCOLLECTION = "article";
-    
-    private final String ACM_CSV = "acm.csv";
-    private final String EXAMS_CSV = "exams.csv";
-    private final String ARTICLE_DIRECTORY = "articles";
-    private final String ARTICLE_DOWNLOAD_LINK = "http://dl.acm.org/citation.cfm?id=";
-    
-    private final String CRON_EXPRESSION = "0 0 12 1/1 * ? *"; // Once a day at 12.00 am
-    
-    private Database<Article> db;
-    private ArrayList<Article> al;
-    private ArrayList<Exam> selectedExams;
-    private Notifier notifier;
-    private String userMail;
-    QuartzScheduler quartzScheduler;
     
     public MainGui() {
+        Helper.getDefaultHelper();
+        
         initComponents();
         
         buttonGroup1.add(jRadioButton1);
         buttonGroup1.add(jRadioButton2);
         buttonGroup1.add(jRadioButton3);
         jLabelFailed.setVisible(false);
-        
-        db = new ArticleDatabase(DBHOST, DBCOLLECTION);
-        notifier = new EmailNotifier(MAILUSERNAME, MAILPASSWORD);
-        selectedExams = new ArrayList<>();
-        
-        readSelectedExams();
-        readMailInformation();
-        
         jButtonKaydet.setEnabled(false);
-        setNotifyScheduler();
     }
 
     @SuppressWarnings("unchecked")
@@ -333,94 +286,57 @@ public class MainGui extends javax.swing.JFrame{
 
         searchButton.setEnabled(false);
         
-        DefaultTableModel model = (DefaultTableModel) jTableResult.getModel();
-        model.getDataVector().removeAllElements();
-        model.fireTableDataChanged();
-        
-        al = null;
+        String query = "";
         
         if(jRadioButton1.isSelected()){
-            try {
-                al = db.find("title=/"+jTextFieldSearch.getText()+"/");
-            } catch (DatabaseException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage());
-            }
+            query = "title=/"+jTextFieldSearch.getText()+"/";
         }
         else if(jRadioButton2.isSelected()){
-            try {
-                al = db.find("year="+jTextFieldSearch.getText());
-            } catch (DatabaseException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage());
-            }
+            query = "year="+jTextFieldSearch.getText();
         }
         else if(jRadioButton3.isSelected()){
-            try {
-                al = db.find("keywords=/"+jTextFieldSearch.getText()+"/");
-            } catch (DatabaseException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage());
-            }
+            query = "keywords=/"+jTextFieldSearch.getText()+"/";
         }
         
-        if(al != null){
-            for(Article a : al){
-                model.addRow(new Object[]{a.getTitle(), a.getAuthor(), a.getVenue(), a.getYear()});
-            }
+        try {
+            Helper.getDefaultHelper().searchArticles((DefaultTableModel) jTableResult.getModel(), query);
+        } catch (DatabaseException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
         
         searchButton.setEnabled(true);
     }//GEN-LAST:event_searchButtonActionPerformed
 
     private void jButtonLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoadActionPerformed
-        initExams();
         
         try {
-            quartzScheduler.stop();
-            setNotifyScheduler();
-            jButtonKaydet.setEnabled(true);
-        } catch (SchedulerException ex) {
-            System.out.println(ex.getMessage());
-            jButtonKaydet.setEnabled(false);
+            Helper.getDefaultHelper().getExamsFromÖSYM((DefaultTableModel) jTableExam.getModel());
+            jLabelFailed.setVisible(false);
+        } catch (ParserException | IOException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+            jLabelFailed.setVisible(true);
+        } catch (SchedulerException ex){
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+            jLabelFailed.setVisible(false);
         }
+        
+        jButtonKaydet.setEnabled(true);
     }//GEN-LAST:event_jButtonLoadActionPerformed
 
     private void jTableResultMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableResultMouseClicked
         if (evt.getClickCount()>=2){
             int index = jTableResult.getSelectedRow();
             
-            new ArticleReaderGui(al.get(index), db).setVisible(true);
+            new ArticleReaderGui(Helper.getDefaultHelper().getArticleFromFoundArticles(index)).setVisible(true);
         }
     }//GEN-LAST:event_jTableResultMouseClicked
 
     private void jButtonKaydetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonKaydetActionPerformed
-        DefaultTableModel model = (DefaultTableModel) jTableExam.getModel();
-        selectedExams.clear();
-        for(int i=0; i<model.getRowCount(); i++){
-            if((Boolean) model.getValueAt(i, 2)){
-                Exam e = new Exam( (String) model.getValueAt(i, 0), (String) model.getValueAt(i, 1));
-                selectedExams.add(e);
-            }
-        }
         try {
-            String[] columns = {"name","date"};
-            CsvWriter cw = new CsvWriter(EXAMS_CSV, columns);
-            
-            for(Exam e : selectedExams){
-                String[] contents = {e.getAd(), e.getTarih()};
-                cw.write(contents);
-            }
-            cw.close();
-        } catch (Exception ex) {
+            Helper.getDefaultHelper().saveExamsToFile((DefaultTableModel) jTableExam.getModel());
+            JOptionPane.showMessageDialog(this, "Saved. You will be notified when the exam date is close.");
+        } catch (IOException | SchedulerException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
-            return;
-        }
-        
-        JOptionPane.showMessageDialog(this, "Saved. You will be notified when the exam date is close.");
-        
-        try {
-            quartzScheduler.stop();
-            setNotifyScheduler();
-        } catch (SchedulerException ex) {
-            System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_jButtonKaydetActionPerformed
 
@@ -429,151 +345,18 @@ public class MainGui extends javax.swing.JFrame{
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
     private void jMenuItemSetEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSetEmailActionPerformed
-        new SetEmailGui(notifier, this).setVisible(true);
+        new SetEmailGui().setVisible(true);
     }//GEN-LAST:event_jMenuItemSetEmailActionPerformed
 
     private void jButtonPopulateDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPopulateDatabaseActionPerformed
-        populateDatabase(db, ACM_CSV);
+        try {
+            String result = Helper.getDefaultHelper().populateDatabase();
+            JOptionPane.showMessageDialog(this, result);
+        } catch (DatabaseException | IOException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }//GEN-LAST:event_jButtonPopulateDatabaseActionPerformed
-
-    private void initExams() {
-        DefaultTableModel model = (DefaultTableModel) jTableExam.getModel();
-        model.getDataVector().removeAllElements();
-        model.fireTableDataChanged();
-        
-        readSelectedExams();
-        
-        try {
-            ArrayList<Exam> alExam = ÖsymParser.getParser().getList();
-            if(alExam != null){
-                for(Exam e : alExam){
-                    model.addRow(new Object[]{e.getAd(), e.getTarih(), selectedExamsContains(e)});
-                }
-            }
-            jLabelFailed.setVisible(false);
-        } catch (ParserException ex) {
-            jLabelFailed.setVisible(true);
-        }
-    }
-    
-    private boolean selectedExamsContains(Exam exam){
-        return selectedExams.stream().anyMatch((e) -> (e.equals(exam)));
-    }
-    
-    private void readSelectedExams() {
-        try {
-            selectedExams.clear();
-            CsvReader cr = new CsvReader(EXAMS_CSV);
-            String[] values;
-            while((values = cr.readNext())!= null){
-                Exam e = new Exam(values[0], values[1]);
-                selectedExams.add(e);
-            }
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
-
-    public String getUserMail(){
-        return this.userMail;
-    }
-    
-    public void setUserMail(String userMail){
-        this.userMail = userMail;
-    }
-    
-    public void saveMailInformation(Notifier n, String mail) throws IOException{
-        FileWriter fw = new FileWriter(MAILFILE);
-        BufferedWriter bw = new BufferedWriter(fw);
-        
-        bw.write(mail + " " + n.isaDayAgo() + " " + n.isaWeekAgo());
-        bw.close();
-        fw.close();
-    }
-    
-    public void readMailInformation(){
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(MAILFILE));
-            String line = br.readLine();
-            String[] strs = line.split(" ");
-            setUserMail(strs[0]);
-            notifier.setaDayAgo(strs[1].equals("true"));
-            notifier.setaWeekAgo(strs[2].equals("true"));
-            br.close();
-        } 
-        catch (Exception ex) {
-            notifier.setaDayAgo(false);
-            notifier.setaWeekAgo(false);
-            System.out.println(ex.getMessage());
-        }
-    }
-    
-    private void populateDatabase(Database<Article> db, String csvFile) {
-        
-        CsvReader cr;
-        try {
-            cr = new CsvReader(csvFile);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-            return;
-        }
-        String[] s;
-        Downloader d = Downloader.getDownloader();
-        d.setDirectory(ARTICLE_DIRECTORY);
-        int counterFailed = 0;
-        int counter = 0;
-        
-        try {
-            while ((s = cr.readNext())!= null) {
-                try {
-                    if (db.find("id="+s[0]).isEmpty()){
-                        d.download(ARTICLE_DOWNLOAD_LINK + s[0], s[0] + ".pdf");
-                        
-                        PdfFile pdfFile = new PdfFile(d.getDirectory() + s[0] + ".pdf");
-                        
-                        Article article = new Article(s[0], s[1], s[2], s[3], s[4], pdfFile.toString());
-                        
-                        counter++;
-                        
-                        try{
-                            db.insert(article);
-                        }
-                        catch (DatabaseException ex){
-                            counterFailed++;
-                        }
-                    }
-                } catch (DatabaseException ex) {
-                    JOptionPane.showMessageDialog(this, ex.getMessage());
-                    return;
-                }
-            }
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-            return;
-        }
-        
-        JOptionPane.showMessageDialog(this, counterFailed + " out of " + counter + " article(s) are populated to database.");
-    }
-    
-    private void setNotifyScheduler(){
-        SendMailJob.setEmail(new Email(MAILUSERNAME, userMail, "Exam Notify", "You have a closing exam!"));
-        SendMailJob.setNotifier(notifier);
-        SendMailJob.setCronExpression(CRON_EXPRESSION);
-        
-        ArrayList<SendMailJob> jobs = new ArrayList<>();
-        for(Exam e : selectedExams){
-            SendMailJob smj = new SendMailJob(e.getAd(), e.getTarih());
-            jobs.add(smj);
-        }
-        
-        quartzScheduler = new QuartzScheduler(jobs);
-        try {
-            quartzScheduler.start();
-        } catch (SchedulerException ex) {
-            System.out.println(ex.getMessage());
-        }
-    } 
-    
+     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButtonKaydet;

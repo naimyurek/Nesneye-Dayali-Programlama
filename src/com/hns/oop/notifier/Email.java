@@ -29,6 +29,22 @@ public class Email {
         return text;
     }
 
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
     @Override
     public String toString() {
         String str = "From: " + getFrom() + "\n" +

@@ -2,69 +2,35 @@ package com.hns.oop.quartz;
 
 import com.hns.oop.exceptions.NotifierException;
 import com.hns.oop.notifier.Email;
-import com.hns.oop.notifier.Notifier;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 
-public class SendMailJob implements Job
+public class SendMailJob extends NotificationJob
 {
-    private String name;
-    private String date;
-    private static String cronExpression = "0 0 12 1/1 * ? *"; // Once a day at 12
-    private static Notifier notifier = null;
-    private static Email email = null;
+    private static Email standartEmail = null;
     
     public SendMailJob() {
-        this.name = "";
-        this.date = "";
+        super("Unknown","01.01.2001");
     }
     
     public SendMailJob(String examName, String examDate){
-        this.name = examName;
-        this.date = examDate;
+        super(examName, examDate);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public static void setCronExpression(String cronExpression) {
-        SendMailJob.cronExpression = cronExpression;
-    }
-
-    public static void setNotifier(Notifier notifier) {
-        SendMailJob.notifier = notifier;
-    }
-
-    public static void setEmail(Email email) {
-        SendMailJob.email = email;
-    }
-
-    public Trigger getTrigger() {
-        Trigger trigger = TriggerBuilder
-                            .newTrigger()
-                            .withSchedule(CronScheduleBuilder.cronSchedule(SendMailJob.cronExpression))
-                            .build();
-        return trigger;
+    public static void setStandartEmail(Email standartEmail) {
+        SendMailJob.standartEmail = standartEmail;
     }
     
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         
-        if (email == null || notifier == null)
+        if (standartEmail == null || notifier == null)
             return;
         
         try {
@@ -79,13 +45,15 @@ public class SendMailJob implements Job
             long diff = Math.abs(d1.getTime() - d2.getTime());
             long diffDays = diff / (24 * 60 * 60 * 1000);
             
+            System.out.println("Checking exam to send mail: " + name + " " + date);
+            
             if (diffDays == 1 && notifier.isaDayAgo()){
                 String text = "You have an exam tomorrow!\n\n" +
                               "Exam name: " + name + "\n" +
                               "Exam date: " + date;
                 
                 try {
-                    notifier.notifyUser(new Email(email.getFrom(), email.getTo(), email.getSubject(), text));
+                    notifier.notifyUser(new Email(standartEmail.getFrom(), standartEmail.getTo(), standartEmail.getSubject(), text));
                 } 
                 catch (NotifierException ex) {
                     System.out.println(ex.getMessage());
@@ -94,11 +62,11 @@ public class SendMailJob implements Job
             else if (diffDays == 7 && notifier.isaWeekAgo())            
             {
                 String text = "You have an exam next week!\n\n" +
-                              "Exam name: " + getName() + "\n" +
-                              "Exam date: " + getDate();
+                              "Exam name: " + super.getName() + "\n" +
+                              "Exam date: " + super.getDate();
                 
                 try {
-                    notifier.notifyUser(new Email(email.getFrom(), email.getTo(), email.getSubject(), text));
+                    notifier.notifyUser(new Email(standartEmail.getFrom(), standartEmail.getTo(), standartEmail.getSubject(), text));
                 } 
                 catch (NotifierException ex) {
                     System.out.println(ex.getMessage());
@@ -109,4 +77,15 @@ public class SendMailJob implements Job
             System.out.println(ex.getMessage());
         }        
     }
+
+    @Override
+    public Class getJobClass() {
+        return this.getClass();
+    }
+
+    @Override
+    public String toString() {
+        return "SendMailJob( '" + super.getName() + "', '" + super.getDate() + "' )";
+    }    
+    
 }

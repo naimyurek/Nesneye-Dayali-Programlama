@@ -8,12 +8,12 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
-public class QuartzScheduler {
+public class NotificationScheduler {
     
-    private ArrayList<SendMailJob> jobs;
+    private ArrayList<NotificationJob> jobs;
     private Scheduler scheduler;
     
-    public QuartzScheduler(ArrayList<SendMailJob> jobs){
+    public NotificationScheduler(ArrayList<NotificationJob> jobs){
         this.jobs = jobs;
     }
     
@@ -25,7 +25,7 @@ public class QuartzScheduler {
         
         JobBuilder jobBuilder;
 
-        for (SendMailJob job : jobs) {
+        for (NotificationJob job : jobs) {
 
             Trigger trigger = job.getTrigger();
             jobBuilder = JobBuilder.newJob(job.getClass());
@@ -33,10 +33,13 @@ public class QuartzScheduler {
             jobBuilder.usingJobData("date", job.getDate());
 
             scheduler.scheduleJob(jobBuilder.build(), trigger);
+            
+            System.out.println("Job planned: " + job.toString());
         }
     }
     
     public void stop() throws SchedulerException{
         scheduler.shutdown();
     }
+    
 }
