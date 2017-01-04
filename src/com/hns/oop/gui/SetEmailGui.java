@@ -3,8 +3,6 @@ package com.hns.oop.gui;
 import com.hns.oop.Helper;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.quartz.SchedulerException;
 

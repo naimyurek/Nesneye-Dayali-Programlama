@@ -165,14 +165,14 @@ public class MainGui extends javax.swing.JFrame{
 
             },
             new String [] {
-                "NAME", "DATE", "ALERT"
+                "NAME", "DATE", "FIRST APPLICATION", "LAST APPLICATION", "RESULT", "ALERT"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -185,12 +185,21 @@ public class MainGui extends javax.swing.JFrame{
         });
         jScrollPane2.setViewportView(jTableExam);
         if (jTableExam.getColumnModel().getColumnCount() > 0) {
-            jTableExam.getColumnModel().getColumn(1).setMinWidth(120);
-            jTableExam.getColumnModel().getColumn(1).setPreferredWidth(120);
-            jTableExam.getColumnModel().getColumn(1).setMaxWidth(120);
-            jTableExam.getColumnModel().getColumn(2).setMinWidth(50);
-            jTableExam.getColumnModel().getColumn(2).setPreferredWidth(50);
-            jTableExam.getColumnModel().getColumn(2).setMaxWidth(50);
+            jTableExam.getColumnModel().getColumn(1).setMinWidth(80);
+            jTableExam.getColumnModel().getColumn(1).setPreferredWidth(80);
+            jTableExam.getColumnModel().getColumn(1).setMaxWidth(80);
+            jTableExam.getColumnModel().getColumn(2).setMinWidth(130);
+            jTableExam.getColumnModel().getColumn(2).setPreferredWidth(130);
+            jTableExam.getColumnModel().getColumn(2).setMaxWidth(130);
+            jTableExam.getColumnModel().getColumn(3).setMinWidth(125);
+            jTableExam.getColumnModel().getColumn(3).setPreferredWidth(125);
+            jTableExam.getColumnModel().getColumn(3).setMaxWidth(125);
+            jTableExam.getColumnModel().getColumn(4).setMinWidth(80);
+            jTableExam.getColumnModel().getColumn(4).setPreferredWidth(80);
+            jTableExam.getColumnModel().getColumn(4).setMaxWidth(80);
+            jTableExam.getColumnModel().getColumn(5).setMinWidth(50);
+            jTableExam.getColumnModel().getColumn(5).setPreferredWidth(50);
+            jTableExam.getColumnModel().getColumn(5).setMaxWidth(50);
         }
 
         jButtonLoad.setText("LOAD EXAMS ↺");
@@ -312,7 +321,7 @@ public class MainGui extends javax.swing.JFrame{
         try {
             Helper.getDefaultHelper().getExamsFromÖSYM((DefaultTableModel) jTableExam.getModel());
             jLabelFailed.setVisible(false);
-        } catch (ParserException | IOException ex) {
+        } catch (ParserException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
             jLabelFailed.setVisible(true);
         } catch (SchedulerException ex){

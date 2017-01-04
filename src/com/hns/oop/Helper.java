@@ -125,17 +125,21 @@ public class Helper {
         
         selectedExams.clear();
         for(int i=0; i<model.getRowCount(); i++){
-            if((Boolean) model.getValueAt(i, 2)){
-                Exam e = new Exam( (String) model.getValueAt(i, 0), (String) model.getValueAt(i, 1));
+            if((Boolean) model.getValueAt(i, 5)){
+                Exam e = new Exam(  (String) model.getValueAt(i, 0), 
+                                    (String) model.getValueAt(i, 1), 
+                                    (String) model.getValueAt(i, 2),
+                                    (String) model.getValueAt(i, 3),
+                                    (String) model.getValueAt(i, 4));
                 selectedExams.add(e);
             }
         }
          
-        String[] columns = {"name","date"};
+        String[] columns = {"name","examdate","applicationfirst","applicationlast","result"};
         CsvWriter cw = new CsvWriter(EXAMS_CSV_FILE, columns);
             
         for(Exam e : selectedExams){
-            String[] contents = {e.getAd(), e.getTarih()};
+            String[] contents = {e.getAd(), e.getSınavTarihi(), e.getBaşvuruTarihiFirst(), e.getBaşvuruTarihiLast(), e.getSonuçTarihi()};
             cw.write(contents);
         }
         cw.close();
@@ -143,27 +147,35 @@ public class Helper {
         restartNotificationScheduler();
     }
     
-    public void getExamsFromÖSYM(DefaultTableModel model) throws ParserException, IOException, SchedulerException {
+    public void getExamsFromÖSYM(DefaultTableModel model) throws ParserException, SchedulerException {
         
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
         
-        readExamsFromFile();
+        try {
+            readExamsFromFile();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
         
         ArrayList<Exam> alExam = ÖsymParser.getParser().getList();
         for(Exam e : alExam){
-            model.addRow(new Object[]{e.getAd(), e.getTarih(), selectedExams.stream().anyMatch((exam) -> (exam.equals(e)))});
+            model.addRow(new Object[]{e.getAd(), e.getSınavTarihi(), e.getBaşvuruTarihiFirst(), e.getBaşvuruTarihiLast(), e.getSonuçTarihi(), selectedExams.stream().anyMatch((exam) -> (exam.equals(e)))});
         }
     }
     
     public void readExamsFromFile() throws IOException {
         
         selectedExams.clear();
-        CsvReader cr = new CsvReader(EXAMS_CSV_FILE);
-        String[] values;
-        while((values = cr.readNext())!= null){
-            Exam e = new Exam(values[0], values[1]);
-            selectedExams.add(e);
+        try {
+            CsvReader cr = new CsvReader(EXAMS_CSV_FILE);
+            String[] values;
+            while((values = cr.readNext())!= null){
+                Exam e = new Exam(values[0], values[1], values[2], values[3], values[4]);
+                selectedExams.add(e);
+            }
+        } catch (IOException ex){
+            System.out.println(ex.getMessage());
         }
     }
     
@@ -241,7 +253,7 @@ public class Helper {
         
         ArrayList<NotificationJob> jobs = new ArrayList<>();
         for(Exam e : selectedExams){
-            SendMailJob smj = new SendMailJob(e.getAd(), e.getTarih());
+            SendMailJob smj = new SendMailJob(e.getAd(), e.getSınavTarihi(), e.getBaşvuruTarihiFirst(), e.getBaşvuruTarihiLast(), e.getSonuçTarihi());
             jobs.add(smj);
         }
         

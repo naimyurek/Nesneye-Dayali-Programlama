@@ -14,16 +14,21 @@ public abstract class NotificationJob implements Job {
     protected static Notifier notifier = null;
     
     private String name;
-    private String date;
+    private String examDate;
+    private String başvuruTarihiFirst; 
+    private String başvuruTarihiLast;
+    private String sonuçTarihi;
 
-    public NotificationJob(String examName, String examDate) {
+    public NotificationJob(String examName, String examDate, String başvuruTarihiFirst, String başvuruTarihiLast, String sonuçTarihi) {
         this.name = examName;
-        this.date = examDate;
+        this.examDate = examDate;
+        this.başvuruTarihiFirst = başvuruTarihiFirst;
+        this.başvuruTarihiLast = başvuruTarihiLast;
+        this.sonuçTarihi = sonuçTarihi;
     }
     
     @Override
     public abstract void execute(JobExecutionContext context) throws JobExecutionException;
-    public abstract Class getJobClass();
     
     public Trigger getTrigger() {
         Trigger trigger = TriggerBuilder
@@ -37,8 +42,20 @@ public abstract class NotificationJob implements Job {
         return name;
     }
     
-    public String getDate(){
-        return date;
+    public String getExamDate(){
+        return examDate;
+    }
+
+    public String getBaşvuruTarihiFirst() {
+        return başvuruTarihiFirst;
+    }
+
+    public String getBaşvuruTarihiLast() {
+        return başvuruTarihiLast;
+    }
+
+    public String getSonuçTarihi() {
+        return sonuçTarihi;
     }
     
     public static void setCronExpression(String cronExpression) {
