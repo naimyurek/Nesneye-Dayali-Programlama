@@ -27,7 +27,7 @@ public class CsvWriterTest {
     public void testWrite() throws IOException, ParserException{
         System.out.println("write");
         for(Exam e : ÖsymParser.getParser().getList()){
-            String[] contents = {e.getAd(), e.getTarih()};
+            String[] contents = {e.getAd(), e.getSınavTarihi()};
             cw.write(contents);
         }
         cw.close();

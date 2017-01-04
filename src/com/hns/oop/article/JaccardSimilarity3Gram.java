@@ -14,12 +14,12 @@ public class JaccardSimilarity3Gram implements SimilarityStrategy {
         Set<String> set1 = new HashSet<>(getAnagramList(a1));
         Set<String> set2 = new HashSet<>(getAnagramList(a2));
         
-        int size1 = set1.size();
-        int size2 = set2.size();
+        int size1 = set1.size(); // A
+        int size2 = set2.size(); // B
         
-        set1.retainAll(set2);
+        set1.retainAll(set2); // set1 = A kesişim B
         
-        return 100*((float)set1.size()/(size1 + size2 - set1.size()));
+        return 100*((float)set1.size()/(size1 + size2 - set1.size())); // (A kesişim B) / (A + B - (A kesişim B))
     }
     
     private List<String> getAnagramList(Article a){
@@ -30,9 +30,9 @@ public class JaccardSimilarity3Gram implements SimilarityStrategy {
                 anagramList.add(s.substring(i, i+3));
             }
         }
-        anagramList = anagramList.stream().distinct().collect(Collectors.toList());
+        anagramList = anagramList.stream().distinct().collect(Collectors.toList()); // Bütün 3gramlardan tekrar edenler çıkarılır.
         
         return anagramList;
-    }
+    } // Bir makalenin tüm keywordlerinden anagram listesi oluşturur.
     
 }

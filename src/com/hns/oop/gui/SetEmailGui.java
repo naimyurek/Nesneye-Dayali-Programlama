@@ -1,24 +1,19 @@
 package com.hns.oop.gui;
 
-import com.hns.oop.notifier.Notifier;
+import com.hns.oop.Helper;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import javax.swing.JOptionPane;
+import org.quartz.SchedulerException;
 
 public class SetEmailGui extends javax.swing.JFrame {
-    private Notifier notifier;
-    private String userMail;
-    private MainGui senderForm;
     
-    public SetEmailGui(Notifier notifier, MainGui sender) {
+    public SetEmailGui() {
         initComponents();
-        this.notifier = notifier;
-        this.userMail = sender.getUserMail();
-        this.senderForm = sender;
         
-        jTextFieldEmail.setText(userMail);
-        jCheckBoxDay.setSelected(notifier.isaDayAgo());
-        jCheckBoxWeek.setSelected(notifier.isaWeekAgo());
+        jTextFieldEmail.setText(Helper.getDefaultHelper().getUserMail());
+        jCheckBoxDay.setSelected(Helper.getDefaultHelper().getNotifier().isaDayAgo());
+        jCheckBoxWeek.setSelected(Helper.getDefaultHelper().getNotifier().isaWeekAgo());
     }
     
     @SuppressWarnings("unchecked")
@@ -109,17 +104,16 @@ public class SetEmailGui extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOkActionPerformed
-        this.userMail = jTextFieldEmail.getText();
-        this.notifier.setaDayAgo(jCheckBoxDay.isSelected());
-        this.notifier.setaWeekAgo(jCheckBoxWeek.isSelected());
-        
         try {
-            senderForm.saveMailInformation(notifier, userMail);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "ERROR! Data could not be written.\n" + ex.getMessage());
+                Helper.getDefaultHelper().setNotificationSettings(
+                        jTextFieldEmail.getText(), 
+                        jCheckBoxDay.isSelected(), 
+                        jCheckBoxWeek.isSelected());
+        
+        } catch (IOException | SchedulerException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
         
-        senderForm.setUserMail(userMail);
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_jButtonOkActionPerformed
 

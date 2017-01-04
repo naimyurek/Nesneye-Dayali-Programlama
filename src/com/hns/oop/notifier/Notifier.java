@@ -4,8 +4,8 @@ import com.hns.oop.exceptions.NotifierException;
 
 public abstract class Notifier {
     
-    private boolean aDayAgo;
-    private boolean aWeekAgo;
+    private boolean aDayAgo; // Bir gün önce bildirim gitsin mi?
+    private boolean aWeekAgo; // Bir hafta önce bildirim gitsin mi?
     
     protected Notifier(){
         setaDayAgo(true);

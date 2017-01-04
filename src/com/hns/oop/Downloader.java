@@ -11,37 +11,19 @@ import java.nio.file.StandardCopyOption;
 public class Downloader {
     
     private static Downloader downloader;
-    private String directory;
 
-    private Downloader() {
-        directory = "";
-    }
+    private Downloader() { }
     
-    public static Downloader getDownloader(){
+    public static Downloader getDownloader(){ // Singleton design pattern
         if (downloader==null)
             downloader = new Downloader();
         return downloader;
     }
     
-    public void download(String link, String name) throws IOException{    
+    public void download(String link, String name) throws IOException{ // Bir linki "name" olarak program dizinine indirir.
         
         URL url = new URL(link);
         InputStream in = url.openStream();
-        
-        if (directory.length()!=0){
-            File file = new File(directory);
-            if (!file.exists())
-                file.mkdir();
-        }
-
-        Files.copy(in, Paths.get(directory + name), StandardCopyOption.REPLACE_EXISTING);
-    }
-    
-    public void setDirectory(String directory){
-        this.directory = directory;
-    }
-    
-    public String getDirectory(){
-        return directory + "/";
+        Files.copy(in, Paths.get(name), StandardCopyOption.REPLACE_EXISTING);
     }
 }
