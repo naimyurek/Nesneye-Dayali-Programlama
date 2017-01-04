@@ -43,7 +43,6 @@ public class Helper {
     private String DATABASE_COLLECTION;
     private String ACM_CSV_FILE;
     private String EXAMS_CSV_FILE;
-    private String ARTICLE_DIRECTORY;
     private String CRON_EXPRESSION;
     
     private Email stdMail;
@@ -62,7 +61,6 @@ public class Helper {
         DATABASE_COLLECTION = "article";
         ACM_CSV_FILE = "acm.csv";
         EXAMS_CSV_FILE = "exams.csv";
-        ARTICLE_DIRECTORY = "articles";
         CRON_EXPRESSION = "0 0 12 1/1 * ? *"; // Once a day at 12.00 am
         
         database = new ArticleDatabase(DATABASE_HOST, DATABASE_COLLECTION);
@@ -82,7 +80,6 @@ public class Helper {
         
         ACM_CSV_FILE = "acm.csv";
         EXAMS_CSV_FILE = "exams.csv";
-        ARTICLE_DIRECTORY = "articles";
         MAILFILE = "UserMailInfo.txt";
         
         database = new ArticleDatabase(DATABASE_HOST, DATABASE_COLLECTION);
@@ -216,7 +213,6 @@ public class Helper {
         
         String[] s;
         Downloader d = Downloader.getDownloader();
-        d.setDirectory(ARTICLE_DIRECTORY);
         int counterFailed = 0;
         int counter = 0;
         
@@ -224,7 +220,7 @@ public class Helper {
             if (database.find("id="+s[0]).isEmpty()){
                 d.download("http://dl.acm.org/citation.cfm?id=" + s[0], s[0] + ".pdf");
                         
-                PdfFile pdfFile = new PdfFile(d.getDirectory() + s[0] + ".pdf");
+                PdfFile pdfFile = new PdfFile(s[0] + ".pdf");
                         
                 Article article = new Article(s[0], s[1], s[2], s[3], s[4], pdfFile.toString());
                         
@@ -347,10 +343,6 @@ public class Helper {
    
     public void setAcmCsvFile(String acmCsvFile) {
         this.ACM_CSV_FILE = acmCsvFile;
-    }
-
-    public void setArticleDirectory(String articleDirectory) {
-        this.ARTICLE_DIRECTORY = articleDirectory;
     }
 
     public void setCronExpression(String cronExpression) {
