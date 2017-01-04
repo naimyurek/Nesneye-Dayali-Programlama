@@ -12,14 +12,14 @@ public class CsvReader {
     
     public CsvReader(String csvFile) throws FileNotFoundException, IOException {
         br = new BufferedReader(new FileReader(csvFile));
-        readNext();
+        readNext(); // İlk satırda column isimleri var. Onları es geç.
     }
     
     public String[] readNext() throws IOException{
-        String line = br.readLine();
+        String line = br.readLine(); // Sonraki satırı okur.
         if (line == null)
             return null;
-        return parse(line);
+        return parse(line); // Virgüllere göre bölüp döndürür.
     }
     
     private String[] parse(String str){
@@ -51,5 +51,5 @@ public class CsvReader {
         }
         
         return al.toArray(new String[0]);
-    }
+    } // Satırı virgüllere göre Stringlere böler. Eğer yazı çift tırnak ile başlıyorsa çift tırnakları görmezden gelir.
 }

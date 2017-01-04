@@ -87,7 +87,7 @@ public class Article {
         return false;
     }
     
-    public String getKeywordsAsString(int length){
+    public String getKeywordsAsString(int length){ // Tüm keywordleri aralarına boşluk koyarak String'e çevirip döndürür.
         String str = "";
         
         str = getKeywordList(length).stream().map((x) -> x + " ").reduce(str, String::concat);
@@ -96,18 +96,20 @@ public class Article {
     }
     
     public List<String> getKeywordList(int length){
-        String[] s = content.split("\\W+");
+        String[] s = content.split("\\W+"); // İçerikten sadece kelime olanları bir diziye aktarir.
         
-        Map<String, Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<>(); // (Kelime, Tekrar Sayısı) olacak şekilde bir HashMap.
         
         for (String w : s) {
+            
             w = w.toLowerCase();
-            Integer n = map.get(w);
-            n = (n == null) ? 1 : ++n;
-            map.put(w, n);
+            Integer n = map.get(w); // O kelimenin tekrar sayısını bulur.
+            n = (n == null) ? 1 : ++n; // O kelime yoksa tekrar sayısını 1 yapar, varsa 1 arttırır.
+            map.put(w, n); // Map'e geri koyar.
+            
         }
         
-        List<String> l = map.entrySet()
+        List<String> l = map.entrySet() // HashMap'i Tekrar sayısına göre azalan şekilde sıralar. Daha sonra sadece kelimeleri listeye çevirir.
         .stream()
         .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new))
@@ -117,6 +119,6 @@ public class Article {
             return l;
         else
             return l.subList(0, length);
-    }
+    } // En çok tekrar eden "length" adet kelimenin listesini döndürür.
     
 }

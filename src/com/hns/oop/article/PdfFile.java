@@ -15,15 +15,15 @@ public class PdfFile {
     public PdfFile(String path) throws IOException{
         
         file = new File(path);
-        PDFParser parser = new PDFParser(new RandomAccessFile(file,"r"));
+        PDFParser parser = new PDFParser(new RandomAccessFile(file,"r")); // Dosyayı okuyor.
         PDFTextStripper pdfStripper = new PDFTextStripper();
 
-        parser.parse();
-        PDDocument pdDoc = parser.getPDDocument();
-        pdfStripper.setStartPage(1);
-        pdfStripper.setEndPage(pdDoc.getNumberOfPages());
+        parser.parse(); // İçeriğini parse ediyor.
+        PDDocument pdDoc = parser.getPDDocument(); // 
+        pdfStripper.setStartPage(1); // İlk sayfadan başla
+        pdfStripper.setEndPage(pdDoc.getNumberOfPages()); // Son sayfaya kadar git
         
-        Text = pdfStripper.getText(pdDoc);
+        Text = pdfStripper.getText(pdDoc); // İçeriğini Text'e kaydet.
         
     }
     

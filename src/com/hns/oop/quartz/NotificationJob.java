@@ -10,7 +10,7 @@ import org.quartz.TriggerBuilder;
 
 public abstract class NotificationJob implements Job {
     
-    protected static String cronExpression = "0 0 12 1/1 * ? *"; // Once a day at 12
+    protected static String cronExpression = "0 0 12 1/1 * ? *"; // Her gün saat 12'de tekrarla
     protected static Notifier notifier = null;
     
     private String name;
@@ -31,7 +31,7 @@ public abstract class NotificationJob implements Job {
     public abstract void execute(JobExecutionContext context) throws JobExecutionException;
     
     public Trigger getTrigger() {
-        Trigger trigger = TriggerBuilder
+        Trigger trigger = TriggerBuilder  // cron expression kullanarak oluşturulan Trigger
                             .newTrigger()
                             .withSchedule(CronScheduleBuilder.cronSchedule(NotificationJob.cronExpression))
                             .build();

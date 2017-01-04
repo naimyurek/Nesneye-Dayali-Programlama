@@ -33,7 +33,7 @@ public class EmailNotifier extends Notifier{
                 }
             }
         );
-    }
+    } // Gmail ayarları ve Gmail hesabına giriş
 
     @Override
     public void notifyUser(Object info) throws NotifierException{
@@ -45,14 +45,14 @@ public class EmailNotifier extends Notifier{
             throw new NotifierException("To send an email, the email object must be given as a parameter.");
         }
         
-        try {
+        try { // Maili oluşturmayı dene
             Message message = new MimeMessage(this.session);
             message.setFrom(new InternetAddress(email.getFrom()));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email.getTo()));
             message.setSubject(email.getSubject());
             message.setText(email.getText());
 
-            Transport.send(message);
+            Transport.send(message); // Maili gönder
 
             System.out.println("Email is sent.\n" + email.toString());
         }

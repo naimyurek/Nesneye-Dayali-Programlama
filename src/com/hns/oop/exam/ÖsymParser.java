@@ -20,7 +20,7 @@ public class ÖsymParser {
         ArrayList<Exam> al = new ArrayList<>();
         
         try {
-            Jsoup.connect(link).get().select("div.table > div.row").forEach((Element e) -> {
+            Jsoup.connect(link).get().select("div.table > div.row").forEach((Element e) -> { // div.tablo'nun içindeki div.row'ların her biri için...
                 String[] firstLast = e.select("div.col-sm-2").get(1).text().split(" ");
                 String lastApp = (firstLast.length == 2) ? firstLast[1] : firstLast[2];
                 al.add(new Exam(e.select("div.col-sm-6").first().text(), 
@@ -36,7 +36,7 @@ public class ÖsymParser {
         return al;
     }
     
-    public static ÖsymParser getParser(){
+    public static ÖsymParser getParser(){ // Singleton
         if (parser == null)
             parser = new ÖsymParser();
         return parser;

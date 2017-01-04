@@ -1,7 +1,6 @@
 package com.hns.oop.quartz;
 
 import java.util.ArrayList;
-import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobExecutionContext;
@@ -10,7 +9,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
 public class NotificationScheduler {
@@ -20,7 +18,7 @@ public class NotificationScheduler {
     
     public NotificationScheduler(ArrayList<NotificationJob> jobs){
         this.jobs = jobs;
-    }
+    } // Her seferinde hangi işlerin yapılacağı set ediliyor.
     
     public void start() throws SchedulerException {
         
@@ -42,19 +40,12 @@ public class NotificationScheduler {
 
             scheduler.scheduleJob(jobBuilder.build(), trigger);
             
-            Job job1 = new Job() {
-                @Override
-                public void execute(JobExecutionContext jec) throws JobExecutionException {
-                    System.out.println("efadf");
-                }
-            };
-            
             System.out.println("Job planned: " + job.toString());
         }
-    }
+    } // Scheduler başlatılıyor. Artık düzenli olarak planlanan işler gerçekleştirilecek.
     
     public void stop() throws SchedulerException{
         scheduler.shutdown();
-    }
+    } // Scheduler kapatılıyor.
     
 }

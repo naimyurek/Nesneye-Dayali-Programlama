@@ -17,7 +17,7 @@ public class SendMailJob extends NotificationJob implements Job
 
     public SendMailJob() {
         super(null, null, null, null, null);
-    }
+    } // Boş constructor olmazsa çalışmaz.
     
     public SendMailJob(String examName, String examDate, String başvuruTarihiFirst, String başvuruTarihiLast, String sonuçTarihi){
         super(examName, examDate, başvuruTarihiFirst, başvuruTarihiLast, sonuçTarihi);
@@ -25,9 +25,9 @@ public class SendMailJob extends NotificationJob implements Job
 
     public static void setStandartEmail(Email standartEmail) {
         SendMailJob.standartEmail = standartEmail;
-    }
+    } // Standart Email şablonu set ediliyor.
     
-    @Override
+    @Override // Scheduler tarafından otomatik çalıştırılan metod
     public void execute(JobExecutionContext context) throws JobExecutionException {
         
         if (standartEmail == null || notifier == null)
@@ -48,6 +48,7 @@ public class SendMailJob extends NotificationJob implements Job
             Date dateLast = new SimpleDateFormat("dd.MM.yyyy").parse(last);
             Date dateResult = new SimpleDateFormat("dd.MM.yyyy").parse(result);
             
+            // Gün farkları hesaplanıyor.
             long diffExam = Math.abs(d1.getTime() - dateExam.getTime());
             diffExam /= (24 * 60 * 60 * 1000);
             

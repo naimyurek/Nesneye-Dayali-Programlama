@@ -19,7 +19,7 @@ public class ArticleReaderGui extends javax.swing.JFrame {
         similars = new ArrayList<>();
         jTextAreaArticle.setText(article.getContent());
         try {
-            similars = Helper.getDefaultHelper().setSimilars(article, (DefaultTableModel) jTableResult.getModel());
+            similars = Helper.getDefaultHelper().setSimilars(article, (DefaultTableModel) jTableResult.getModel(), 4);
         } catch (DatabaseException ex) {
             System.out.println(ex);
         }

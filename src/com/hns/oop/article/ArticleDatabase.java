@@ -21,9 +21,9 @@ public class ArticleDatabase implements Database{
     public ArticleDatabase(String host, String collectionName){
         
         MongoClientURI uri  = new MongoClientURI(host);
-        mongo = new MongoClient( uri );
-        db = mongo.getDatabase(uri.getDatabase());
-        table = db.getCollection(collectionName);
+        mongo = new MongoClient( uri ); // Hosta bağlanır.
+        db = mongo.getDatabase(uri.getDatabase()); // Database'i çeker.
+        table = db.getCollection(collectionName); // Tablo adından tabloyu çeker.
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ArticleDatabase implements Database{
         else
             throw new DatabaseException("The object is not 'Article'.");
         
-        if (find("id=" + makale.getId()).size()>0)
+        if (find("id=" + makale.getId()).size()>0) // Makale id'si unique'tir.
             throw new InsertDatabaseException("This record already exists in the database.");
         else{
             Document document = new Document();
@@ -57,15 +57,12 @@ public class ArticleDatabase implements Database{
         
         ArrayList<Article> al = new ArrayList<>();
         
-        table.find(getQuery(condition)).forEach(new Consumer() {
-            @Override
-            public void accept(Object t) {
-                Document d = (Document) t;
-                Article m = new Article(d.getString("id"), d.getString("title"), d.getString("author"), 
-                                      d.getString("venue"), d.getString("year"), d.getString("content"));
-                al.add(m);
-            }
-        });
+        for( Object t : table.find(getQuery(condition))){ // condition, bir query'ye dönüştürülüp aratılır.
+            Document d = (Document) t;
+            Article m = new Article(d.getString("id"), d.getString("title"), d.getString("author"), 
+                                    d.getString("venue"), d.getString("year"), d.getString("content"));
+            al.add(m);
+        }
         return al;
     } // String olarak bir komut alır ve tablodan bu kısıta uygun girdileri bulur, makale nesnesine dönüştürür ve bütün makalelerin listesini döndürür.
     

@@ -19,7 +19,7 @@ public class CsvWriter {
         try {
             fw = new FileWriter(fileName);
             bw = new BufferedWriter(fw);
-            write(columns);
+            write(columns); // Column bilgilerini yazdırır.
 	} 
         catch (IOException e) {
             if (bw != null)
@@ -44,7 +44,7 @@ public class CsvWriter {
             s += '\n';
             bw.write(s);
         }
-    }
+    } // Content olarak verilen diziyi aralarına virgül koyarak yazdırır.
     
     public void close() throws IOException{
         if (bw != null)
@@ -52,5 +52,5 @@ public class CsvWriter {
 
 	if (fw != null)
             fw.close();
-    }
+    } // Yazma işleminin sonuçlanması için BufferedWriter ve FileWriter'ın kapatılması gerekir.
 }

@@ -68,7 +68,7 @@ public class Helper {
         selectedExams = new ArrayList<>();
         stdMail = new Email(MAILUSERNAME, userMail, "Exam Notify", "You have a closing exam!");
         initialize();
-    }
+    } // Standart Helper
     
     public Helper(String mailUserName, String mailPassword, String dbHost, String dbCol, String cronExp){
         
@@ -89,12 +89,12 @@ public class Helper {
         initialize();
     }
     
-    public static Helper getDefaultHelper(){
+    public static Helper getDefaultHelper(){ 
         if (defaultHelper == null){
             defaultHelper = new Helper();
         }
         return defaultHelper;
-    }
+    } // Singleton
     
     public void initialize(){
         try {
@@ -116,33 +116,34 @@ public class Helper {
         } catch (SchedulerException ex) {
             System.out.println(ex.getMessage());
         }
-    }
+    } // Program ilkleniyor
     
     public void saveExamsToFile(DefaultTableModel model) throws IOException, SchedulerException{
         
         selectedExams.clear();
         for(int i=0; i<model.getRowCount(); i++){
-            if((Boolean) model.getValueAt(i, 5)){
+            if((Boolean) model.getValueAt(i, 5)){ // Eğer kullanıcı tarafından işaretlenmiş ise
                 Exam e = new Exam(  (String) model.getValueAt(i, 0), 
                                     (String) model.getValueAt(i, 1), 
                                     (String) model.getValueAt(i, 2),
                                     (String) model.getValueAt(i, 3),
                                     (String) model.getValueAt(i, 4));
-                selectedExams.add(e);
+                selectedExams.add(e); // O sınavı seçili olarak kaydet.
             }
         }
          
         String[] columns = {"name","examdate","applicationfirst","applicationlast","result"};
-        CsvWriter cw = new CsvWriter(EXAMS_CSV_FILE, columns);
+        CsvWriter cw = new CsvWriter(EXAMS_CSV_FILE, columns); // Önce sütun isimlerini yazdır.
             
         for(Exam e : selectedExams){
             String[] contents = {e.getAd(), e.getSınavTarihi(), e.getBaşvuruTarihiFirst(), e.getBaşvuruTarihiLast(), e.getSonuçTarihi()};
             cw.write(contents);
-        }
-        cw.close();
+        } // Bütün seçili sınavları yazdır.
+        cw.close(); // Yazıcıyı kapat.
         
-        restartNotificationScheduler();
-    }
+        restartNotificationScheduler(); // Yeni seçilmiş sınavların bildiriminin gitmesi için scheduler'ı yeniden kur.
+        
+    } // Tablo modelini alip içindekileri dosyaya yazdırır.
     
     public void getExamsFromÖSYM(DefaultTableModel model) throws ParserException, SchedulerException {
         
@@ -150,7 +151,7 @@ public class Helper {
         model.fireTableDataChanged();
         
         try {
-            readExamsFromFile();
+            readExamsFromFile(); // Seçili sınavları dosyadan okur.
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
@@ -158,23 +159,23 @@ public class Helper {
         ArrayList<Exam> alExam = ÖsymParser.getParser().getList();
         for(Exam e : alExam){
             model.addRow(new Object[]{e.getAd(), e.getSınavTarihi(), e.getBaşvuruTarihiFirst(), e.getBaşvuruTarihiLast(), e.getSonuçTarihi(), selectedExams.stream().anyMatch((exam) -> (exam.equals(e)))});
-        }
-    }
+        } // Tüm sınavları tabloya yerleştirir, seçili olup olmamasını dosyadan okuduğu bilgilere göre belirler.
+    } // Ösym'den aldığı sınav bilgilerini Tablo modeline yerleştirir.
     
     public void readExamsFromFile() throws IOException {
         
-        selectedExams.clear();
+        selectedExams.clear(); // Seçili sınavları temizler.
         try {
             CsvReader cr = new CsvReader(EXAMS_CSV_FILE);
             String[] values;
             while((values = cr.readNext())!= null){
                 Exam e = new Exam(values[0], values[1], values[2], values[3], values[4]);
                 selectedExams.add(e);
-            }
+            } // Seçili sınavları dosyadan okur.
         } catch (IOException ex){
             System.out.println(ex.getMessage());
         }
-    }
+    } // Dosyadan seçilmiş sınavları okur.
     
     public void saveUserMailInformationToFile() throws IOException{
         FileWriter fw = new FileWriter(MAILFILE);
@@ -183,7 +184,7 @@ public class Helper {
         bw.write(userMail + " " + notifier.isaDayAgo() + " " + notifier.isaWeekAgo());
         bw.close();
         fw.close();
-    }
+    } // Kullanıcının mail ve bildirim istekleri bilgilerini dosyaya yazdırır.
     
     public void readUserMailInformationFromFile() throws IOException{
         userMail = null;
@@ -204,7 +205,7 @@ public class Helper {
         }
         
         stdMail.setTo(userMail);
-    }
+    } // Kullanıcının mail ve bildirim isteklerini dosyadan okur.
     
     public String populateDatabase() throws IOException, DatabaseException {
         
@@ -224,23 +225,23 @@ public class Helper {
                         
                 Article article = new Article(s[0], s[1], s[2], s[3], s[4], pdfFile.toString());
                         
-                counter++;
+                counter++; // Her makale için 1 artar
                     
                 try{
                     database.insert(article);
                 }
                 catch (DatabaseException ex){
-                    counterFailed++;
+                    counterFailed++; // Veri tabanına makaleyi eklerken hata olursa 1 artar.
                 }
             }
         }
         
         return counterFailed + " out of " + counter + " article(s) are populated into database.";
-    }
+    } // Veri tabanını internet sitesinden makale id'si ile makale çekerek doldurur.
     
     public void restartNotificationScheduler() throws SchedulerException{
         
-        if (scheduler != null)
+        if (scheduler != null) // Scheduler çalışıyorsa durdur
             scheduler.stop();
         
         SendMailJob.setStandartEmail(stdMail);
@@ -251,12 +252,12 @@ public class Helper {
         for(Exam e : selectedExams){
             SendMailJob smj = new SendMailJob(e.getAd(), e.getSınavTarihi(), e.getBaşvuruTarihiFirst(), e.getBaşvuruTarihiLast(), e.getSonuçTarihi());
             jobs.add(smj);
-        }
+        } // Her sınav nesnesinden bir iş nesnesi yarat.
         
         scheduler = new NotificationScheduler(jobs);
         
         scheduler.start();
-    } 
+    } // Scheduler'ı yeniden kurup başlatır.
     
     public void searchArticles(DefaultTableModel model, String query) throws DatabaseException {
         
@@ -268,9 +269,9 @@ public class Helper {
         for(Article a : foundArticles){
             model.addRow(new Object[]{a.getTitle(), a.getAuthor(), a.getVenue(), a.getYear()});
         }
-    }
+    } // Tabloyu verilen sorguyu veri tabanında uygulayarak doldurur.
     
-    public ArrayList<Article> setSimilars(Article article, DefaultTableModel model) throws DatabaseException{
+    public ArrayList<Article> setSimilars(Article article, DefaultTableModel model, int count) throws DatabaseException{
         
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
@@ -281,9 +282,9 @@ public class Helper {
         for (Article w : database.find("")) {
             Float similarity = ac.getSimilarity(article, w);
             map.put(w, similarity);
-        }
+        } // Map'e makale ve benzerlik oranı eklenir.
         
-        map = map.entrySet()
+        map = map.entrySet() // Map benzerlik oranına göre büyükten küçüğe sıralanır.
         .stream()
         .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
@@ -291,7 +292,7 @@ public class Helper {
         ArrayList<Article> similars = new ArrayList<>();
         
         for(Map.Entry<Article,Float> e : map.entrySet()){
-            if (model.getRowCount() != 3){
+            if (model.getRowCount() != count){ // Count 'ı aşmayacak şekilde tabloya eklenir.
                 Article a = e.getKey();
                 Float similarity = e.getValue();
                 if (!article.equals(a)){
@@ -299,10 +300,13 @@ public class Helper {
                     similars.add(a);
                 }
             }
+            else {
+                return similars;
+            }
         }
         
         return similars;
-    }
+    } // Veri tabanındaki tüm makaleler parametre olarak alınan makale ile karşılaştırılır. Benzerlik oranına göre büyükten küçüğe sıralanıp X tanesi tabloya eklenir. Ayrıca ArrayList olarak döndürülür.
     
     public void setNotificationSettings(String userMail, boolean aDayAgo, boolean aWeekAgo) throws IOException, SchedulerException{
         this.userMail = userMail;
@@ -311,7 +315,7 @@ public class Helper {
         
         saveUserMailInformationToFile();
         restartNotificationScheduler();
-    }
+    } // Bildirim ayarları set ediliyor.
     
     public Article getArticleFromFoundArticles(int index) {
         return foundArticles.get(index);
